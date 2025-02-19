@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   return (
@@ -7,14 +8,16 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+            <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
               PATH2it
-            </h1>
+            </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <Button variant="ghost" className="text-sm font-medium">
-              Categories
-            </Button>
+            <Link to="/">
+              <Button variant="ghost" className="text-sm font-medium">
+                Categories
+              </Button>
+            </Link>
             <Button variant="ghost" className="text-sm font-medium">
               Practice Tests
             </Button>
