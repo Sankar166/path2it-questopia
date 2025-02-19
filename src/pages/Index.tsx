@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CategoryCard } from "@/components/CategoryCard";
 
@@ -49,11 +49,10 @@ const categories = [
 ];
 
 const Index = () => {
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const navigate = useNavigate();
 
-  const handleCategoryClick = (categoryId: number) => {
-    setSelectedCategory(categoryId);
-    // TODO: Navigate to category page
+  const handleCategoryClick = (categoryTitle: string) => {
+    navigate(`/questions/${categoryTitle.toLowerCase()}`);
   };
 
   return (
@@ -76,7 +75,7 @@ const Index = () => {
                 description={category.description}
                 questionsCount={category.questionsCount}
                 progress={category.progress}
-                onClick={() => handleCategoryClick(category.id)}
+                onClick={() => handleCategoryClick(category.title)}
               />
             ))}
           </div>
