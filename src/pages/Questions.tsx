@@ -15,7 +15,7 @@ interface AnsweredQuestion {
 
 const Questions = () => {
   const { category } = useParams();
-  const questions = category ? questionsData[category.toLowerCase()] : [];
+  const questions = category && questionsData[category.toLowerCase()] ? questionsData[category.toLowerCase()] : [];
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
 
   const handleAnswerClick = (questionId: number, selectedAnswerIndex: number) => {
@@ -39,6 +39,28 @@ const Questions = () => {
     }
     return null;
   };
+
+  if (!category || !questions.length) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <Header />
+        <main className="container mx-auto px-4 pt-24 pb-16">
+          <div className="mb-8">
+            <Link to="/">
+              <Button variant="ghost" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Categories
+              </Button>
+            </Link>
+          </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">No questions found for this category</h2>
+            <p className="mt-2 text-gray-600">Please select a different category</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">

@@ -11,6 +11,10 @@ interface QuestionCardProps {
 }
 
 export const QuestionCard = ({ question, isAnswered, onAnswerSelect, getAnswerStatus }: QuestionCardProps) => {
+  if (!question || !question.options) {
+    return null;
+  }
+
   return (
     <Card className="p-6 space-y-4">
       <div className="space-y-2">
