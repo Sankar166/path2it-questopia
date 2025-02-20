@@ -1,6 +1,7 @@
 
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -58,6 +59,7 @@ const Questions = () => {
             <p className="mt-2 text-gray-600">Please select a different category</p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -94,6 +96,7 @@ const Questions = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };
