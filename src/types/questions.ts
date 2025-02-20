@@ -6,3 +6,7 @@ export interface Question {
   correctAnswer: number;
   explanation: string;
 }
+
+export interface QuestionsByCategory {
+  [key: string]: Question[];
+}
