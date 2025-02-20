@@ -1,6 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { CategoryCard } from "@/components/CategoryCard";
 
 const categories = [
@@ -56,9 +57,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100">
       <Header />
-      <main className="container mx-auto px-4 pt-24 pb-16">
+      <main className="container mx-auto px-4 pt-24 pb-16 flex-grow">
         <section className="space-y-8 animate-fade-in">
           <div className="text-center space-y-4">
             <h2 className="text-4xl font-bold">Master Your Skills</h2>
@@ -81,6 +82,7 @@ const Index = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };
