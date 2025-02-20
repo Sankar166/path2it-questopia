@@ -5,7 +5,6 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { questionsData } from "@/data/questionsData";
 import { QuestionCard } from "@/components/QuestionCard";
 import type { Question } from "@/types/questions";
 
@@ -14,9 +13,35 @@ interface AnsweredQuestion {
   selectedAnswer: number;
 }
 
+const sampleQuestions = {
+  aptitude: [
+    {
+      id: 1,
+      question: "If a train travels 360 kilometers in 4 hours, what is its average speed in kilometers per hour?",
+      options: ["80 km/h", "90 km/h", "85 km/h", "95 km/h"],
+      correctAnswer: 0,
+      explanation: "Average speed = Total distance / Total time = 360 km / 4 h = 90 km/h"
+    },
+    {
+      id: 2,
+      question: "What is 15% of 200?",
+      options: ["20", "25", "30", "35"],
+      correctAnswer: 2,
+      explanation: "15% of 200 = (15/100) × 200 = 30"
+    },
+    {
+      id: 3,
+      question: "If 6 workers can complete a task in 12 days, how many days will it take 9 workers to complete the same task?",
+      options: ["6 days", "8 days", "10 days", "14 days"],
+      correctAnswer: 1,
+      explanation: "Using the formula: (Number of workers × Days) remains constant. So, 6 × 12 = 9 × x, where x = 8 days"
+    }
+  ]
+};
+
 const Questions = () => {
   const { category } = useParams();
-  const questions = category && questionsData[category.toLowerCase()] ? questionsData[category.toLowerCase()] : [];
+  const questions = category ? sampleQuestions[category.toLowerCase() as keyof typeof sampleQuestions] || [] : [];
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
 
   const handleAnswerClick = (questionId: number, selectedAnswerIndex: number) => {

@@ -30,7 +30,7 @@ export const QuestionCard = ({ question, isAnswered, onAnswerSelect, getAnswerSt
               index={index}
               isAnswered={isAnswered}
               status={getAnswerStatus(question.id, index)}
-              onClick={() => onAnswerSelect(question.id, index)}
+              onClick={() => !isAnswered && onAnswerSelect(question.id, index)}
             />
           ))}
         </div>
