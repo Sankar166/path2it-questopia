@@ -10,6 +10,7 @@ export interface Question {
 export interface QuestionsByCategory {
   [key: string]: Question[];
 }
+
 export interface QuestionsArray {
   questions: Question[];
 }
