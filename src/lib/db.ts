@@ -26,6 +26,16 @@ export async function updateUserProgress(
   category: string,
   isCorrect: boolean
 ) {
+  // First get current profile stats
+  const { data: profile, error: profileError } = await supabase
+    .from('user_profiles')
+    .select('total_questions_attempted, correct_answers')
+    .eq('user_id', userId)
+    .single();
+
+  if (profileError) throw profileError;
+
+  // Insert progress record
   const { data, error } = await supabase
     .from('user_progress')
     .insert([
@@ -41,16 +51,16 @@ export async function updateUserProgress(
 
   if (error) throw error;
 
-  // Update the user profile statistics
-  const { error: profileError } = await supabase
+  // Update profile stats
+  const { error: updateError } = await supabase
     .from('user_profiles')
     .update({
-      total_questions_attempted: supabase.raw('total_questions_attempted + 1'),
-      correct_answers: supabase.raw(isCorrect ? 'correct_answers + 1' : 'correct_answers'),
+      total_questions_attempted: (profile?.total_questions_attempted || 0) + 1,
+      correct_answers: (profile?.correct_answers || 0) + (isCorrect ? 1 : 0),
     })
     .eq('user_id', userId);
 
-  if (profileError) throw profileError;
+  if (updateError) throw updateError;
   return data;
 }
 

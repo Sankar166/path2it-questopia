@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
+import { useQuery } from "@tanstack/react-query";
+import { getQuestions } from "@/lib/db";
+import { useProfile } from "@/hooks/use-profile";
+import { useToast } from "@/hooks/use-toast";
 import type { Question } from "@/types/questions";
 
 interface AnsweredQuestion {
@@ -13,40 +17,46 @@ interface AnsweredQuestion {
   selectedAnswer: number;
 }
 
-const sampleQuestions = {
-  aptitude: [
-    {
-      id: 1,
-      question: "If a train travels 360 kilometers in 4 hours, what is its average speed in kilometers per hour?",
-      options: ["80 km/h", "90 km/h", "85 km/h", "95 km/h"],
-      correctAnswer: 0,
-      explanation: "Average speed = Total distance / Total time = 360 km / 4 h = 90 km/h"
-    },
-    {
-      id: 2,
-      question: "What is 15% of 200?",
-      options: ["20", "25", "30", "35"],
-      correctAnswer: 2,
-      explanation: "15% of 200 = (15/100) × 200 = 30"
-    },
-    {
-      id: 3,
-      question: "If 6 workers can complete a task in 12 days, how many days will it take 9 workers to complete the same task?",
-      options: ["6 days", "8 days", "10 days", "14 days"],
-      correctAnswer: 1,
-      explanation: "Using the formula: (Number of workers × Days) remains constant. So, 6 × 12 = 9 × x, where x = 8 days"
-    }
-  ]
-};
-
 const Questions = () => {
   const { category } = useParams();
-  const questions = category ? sampleQuestions[category.toLowerCase() as keyof typeof sampleQuestions] || [] : [];
+  const { toast } = useToast();
+  const { updateProgress } = useProfile();
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
 
-  const handleAnswerClick = (questionId: number, selectedAnswerIndex: number) => {
+  const { data: questions = [], isLoading } = useQuery({
+    queryKey: ['questions', category],
+    queryFn: () => getQuestions(category || ''),
+    enabled: !!category,
+  });
+
+  const handleAnswerClick = async (questionId: number, selectedAnswerIndex: number) => {
     if (!answeredQuestions.some(q => q.questionId === questionId)) {
+      const question = questions.find(q => q.id === questionId);
+      if (!question) return;
+
+      const isCorrect = selectedAnswerIndex === question.correctAnswer;
       setAnsweredQuestions(prev => [...prev, { questionId, selectedAnswer: selectedAnswerIndex }]);
+
+      try {
+        await updateProgress.mutateAsync({
+          questionId,
+          category: category || '',
+          isCorrect,
+        });
+
+        toast({
+          title: isCorrect ? "Correct!" : "Incorrect",
+          description: isCorrect ? "Well done!" : "Try again next time",
+          variant: isCorrect ? "default" : "destructive",
+        });
+      } catch (error) {
+        console.error('Failed to update progress:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save your progress",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -65,6 +75,20 @@ const Questions = () => {
     }
     return null;
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <Header />
+        <main className="container mx-auto px-4 pt-24 pb-16">
+          <div className="text-center">
+            <p className="text-xl">Loading questions...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!category || !questions.length) {
     return (
