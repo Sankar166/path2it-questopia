@@ -9,7 +9,101 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      questions: {
+        Row: {
+          category: string
+          correct_answer: number
+          created_at: string
+          explanation: string
+          id: number
+          options: string[]
+          question: string
+        }
+        Insert: {
+          category: string
+          correct_answer: number
+          created_at?: string
+          explanation: string
+          id: number
+          options: string[]
+          question: string
+        }
+        Update: {
+          category?: string
+          correct_answer?: number
+          created_at?: string
+          explanation?: string
+          id?: number
+          options?: string[]
+          question?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          correct_answers: number | null
+          created_at: string
+          display_name: string | null
+          id: string
+          total_questions_attempted: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          correct_answers?: number | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          total_questions_attempted?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          correct_answers?: number | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          total_questions_attempted?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_correct: boolean
+          question_id: number
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_correct: boolean
+          question_id: number
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
