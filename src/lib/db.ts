@@ -1,114 +1,76 @@
+
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
-// Generate 1000+ questions programmatically
 function generateQuestions(): Question[] {
   const questions: Question[] = [];
   
   // Quantitative Aptitude Questions (500+ questions)
-  const quantQuestions = [
-    {
-      id: 1,
-      category: 'quantitative aptitude',
-      question: "What is 15% of 400?",
-      options: ["50", "60", "45", "40"],
-      correctAnswer: 1,
-      explanation: "15% of 400 = (15/100) × 400 = 60"
-    },
-    {
-      id: 2,
-      category: 'quantitative aptitude',
-      question: "If a train travels 480 kilometers in 6 hours, what is its average speed in kilometers per hour?",
-      options: ["60 km/h", "70 km/h", "80 km/h", "90 km/h"],
-      correctAnswer: 2,
-      explanation: "Average speed = Total distance / Total time = 480 km / 6 h = 80 km/h"
-    },
-    // ... Add more base questions here
-  ];
-
-  // Generate variations of percentage questions
-  for (let i = 3; i <= 250; i++) {
-    const num1 = Math.floor(Math.random() * 1000) + 100;
-    const percentage = Math.floor(Math.random() * 90) + 10;
-    const result = (percentage / 100) * num1;
-    
-    questions.push({
-      id: i,
-      category: 'quantitative aptitude',
-      question: `What is ${percentage}% of ${num1}?`,
-      options: [
-        Math.floor(result - 10).toString(),
-        result.toString(),
-        Math.floor(result + 10).toString(),
-        Math.floor(result - 5).toString()
-      ],
-      correctAnswer: 1,
-      explanation: `${percentage}% of ${num1} = (${percentage}/100) × ${num1} = ${result}`
-    });
-  }
-
-  // Generate variations of speed/distance/time questions
-  for (let i = 251; i <= 500; i++) {
-    const distance = Math.floor(Math.random() * 1000) + 100;
-    const time = Math.floor(Math.random() * 10) + 2;
-    const speed = distance / time;
-    
-    questions.push({
-      id: i,
-      category: 'quantitative aptitude',
-      question: `If a vehicle travels ${distance} kilometers in ${time} hours, what is its average speed in kilometers per hour?`,
-      options: [
-        Math.floor(speed - 5).toString(),
-        Math.floor(speed + 5).toString(),
-        speed.toString(),
-        Math.floor(speed + 10).toString()
-      ],
-      correctAnswer: 2,
-      explanation: `Average speed = Total distance / Total time = ${distance} km / ${time} h = ${speed} km/h`
-    });
+  for (let i = 1; i <= 500; i++) {
+    if (i <= 2) {
+      // Base questions
+      questions.push({
+        id: i,
+        category: 'quantitative aptitude',
+        question: i === 1 
+          ? "What is 15% of 400?"
+          : "If a train travels 480 kilometers in 6 hours, what is its average speed in kilometers per hour?",
+        options: i === 1 
+          ? ["50", "60", "45", "40"]
+          : ["60 km/h", "70 km/h", "80 km/h", "90 km/h"],
+        correctAnswer: i === 1 ? 1 : 2,
+        explanation: i === 1 
+          ? "15% of 400 = (15/100) × 400 = 60"
+          : "Average speed = Total distance / Total time = 480 km / 6 h = 80 km/h"
+      });
+    } else {
+      // Generate variations
+      const num1 = Math.floor(Math.random() * 1000) + 100;
+      const percentage = Math.floor(Math.random() * 90) + 10;
+      const result = (percentage / 100) * num1;
+      
+      questions.push({
+        id: i,
+        category: 'quantitative aptitude',
+        question: `What is ${percentage}% of ${num1}?`,
+        options: [
+          Math.floor(result - 10).toString(),
+          result.toString(),
+          Math.floor(result + 10).toString(),
+          Math.floor(result - 5).toString()
+        ],
+        correctAnswer: 1,
+        explanation: `${percentage}% of ${num1} = (${percentage}/100) × ${num1} = ${result}`
+      });
+    }
   }
 
   // Technical Questions (500+ questions)
-  const technicalTopics = [
+  const technicalQuestions = [
     {
-      topic: "JavaScript",
-      questions: [
-        {
-          question: "Which of the following is NOT a JavaScript data type?",
-          options: ["Boolean", "Integer", "String", "Symbol"],
-          correctAnswer: 1,
-          explanation: "Integer is not a data type in JavaScript. The numeric data type in JavaScript is 'Number'."
-        },
-        // Add more base questions
-      ]
+      question: "Which of the following is NOT a JavaScript data type?",
+      options: ["Boolean", "Integer", "String", "Symbol"],
+      correctAnswer: 1,
+      explanation: "Integer is not a data type in JavaScript. The numeric data type in JavaScript is 'Number'."
     },
     {
-      topic: "Data Structures",
-      questions: [
-        {
-          question: "What is the time complexity of binary search?",
-          options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-          correctAnswer: 1,
-          explanation: "Binary search has a time complexity of O(log n) as it divides the search interval in half with each iteration."
-        }
-      ]
+      question: "What is the time complexity of binary search?",
+      options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+      correctAnswer: 1,
+      explanation: "Binary search has a time complexity of O(log n) as it divides the search interval in half with each iteration."
     }
   ];
 
-  // Generate technical questions
-  let technicalId = 501;
-  for (const topic of technicalTopics) {
-    for (let i = 0; i < 250; i++) {
-      const baseQuestion = topic.questions[Math.floor(Math.random() * topic.questions.length)];
-      questions.push({
-        id: technicalId++,
-        category: 'technical',
-        question: `[${topic.topic}] ${baseQuestion.question}`,
-        options: [...baseQuestion.options],
-        correctAnswer: baseQuestion.correctAnswer,
-        explanation: baseQuestion.explanation
-      });
-    }
+  for (let i = 501; i <= 1000; i++) {
+    const baseQuestion = technicalQuestions[Math.floor(Math.random() * technicalQuestions.length)];
+    questions.push({
+      id: i,
+      category: 'technical',
+      question: baseQuestion.question,
+      options: [...baseQuestion.options],
+      correctAnswer: baseQuestion.correctAnswer,
+      explanation: baseQuestion.explanation
+    });
   }
 
   return questions;
