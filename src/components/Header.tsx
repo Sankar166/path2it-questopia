@@ -2,8 +2,33 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Code2 } from "lucide-react";
+import { useState } from "react";
+import { AuthDialog } from "./AuthDialog";
+import { useAuth } from "./AuthProvider";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 export const Header = () => {
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "Successfully signed out",
+      });
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200">
       <div className="container mx-auto px-4">
@@ -31,13 +56,22 @@ export const Header = () => {
             </Button>
           </nav>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" className="hidden md:inline-flex">
-              Sign In
-            </Button>
-            <Button>Get Started</Button>
+            {user ? (
+              <Button onClick={handleSignOut} variant="outline">
+                Sign Out
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => setShowAuthDialog(true)} className="hidden md:inline-flex">
+                  Sign In
+                </Button>
+                <Button onClick={() => setShowAuthDialog(true)}>Get Started</Button>
+              </>
+            )}
           </div>
         </div>
       </div>
+      <AuthDialog isOpen={showAuthDialog} onClose={() => setShowAuthDialog(false)} />
     </header>
   );
 };
