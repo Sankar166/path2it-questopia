@@ -3,26 +3,41 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CategoryCard } from "@/components/CategoryCard";
-
-const categories = [
-  {
-    id: 1,
-    title: "Quantitative Aptitude",
-    description: "Practice mathematical and logical reasoning questions to enhance your problem-solving skills",
-    questionsCount: 1500,
-    progress: 0,
-  },
-  {
-    id: 2,
-    title: "Technical",
-    description: "Master programming concepts, database management, and system design principles",
-    questionsCount: 2000,
-    progress: 0,
-  }
-];
+import { useQuery } from "@tanstack/react-query";
+import { getQuestions } from "@/lib/db";
 
 const Index = () => {
   const navigate = useNavigate();
+  
+  // Pre-fetch questions to ensure database connection works
+  const { isLoading: quantitativeLoading } = useQuery({
+    queryKey: ['questions', 'quantitative aptitude'],
+    queryFn: () => getQuestions('quantitative aptitude'),
+  });
+
+  const { isLoading: technicalLoading } = useQuery({
+    queryKey: ['questions', 'technical'],
+    queryFn: () => getQuestions('technical'),
+  });
+
+  const categories = [
+    {
+      id: 1,
+      title: "Quantitative Aptitude",
+      description: "Practice mathematical and logical reasoning questions to enhance your problem-solving skills",
+      questionsCount: 500,
+      progress: 0,
+      isLoading: quantitativeLoading,
+    },
+    {
+      id: 2,
+      title: "Technical",
+      description: "Master programming concepts, database management, and system design principles",
+      questionsCount: 500,
+      progress: 0,
+      isLoading: technicalLoading,
+    }
+  ];
 
   const handleCategoryClick = (categoryTitle: string) => {
     navigate(`/questions/${categoryTitle.toLowerCase()}`);
@@ -50,6 +65,7 @@ const Index = () => {
                 description={category.description}
                 questionsCount={category.questionsCount}
                 progress={category.progress}
+                isLoading={category.isLoading}
                 onClick={() => handleCategoryClick(category.title)}
               />
             ))}
