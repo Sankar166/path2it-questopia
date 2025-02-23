@@ -28,14 +28,16 @@ const Questions = () => {
     queryFn: () => getQuestions(category || ''),
     enabled: !!category,
     retry: 3,
-    onError: (error) => {
-      console.error('Error fetching questions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load questions. Please try again.",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching questions:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load questions. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
   const handleAnswerClick = async (questionId: number, selectedAnswerIndex: number) => {
