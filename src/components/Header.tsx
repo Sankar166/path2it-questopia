@@ -2,9 +2,14 @@
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 export const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b">
@@ -14,7 +19,7 @@ export const Header = () => {
         </Link>
         <nav>
           {user ? (
-            <Button variant="outline" onClick={signOut}>
+            <Button variant="outline" onClick={handleSignOut}>
               Sign Out
             </Button>
           ) : (
