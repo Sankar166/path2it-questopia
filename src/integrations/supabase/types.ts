@@ -12,7 +12,7 @@ export type Database = {
       questions: {
         Row: {
           category: string
-          correct_answer: number
+          correctAnswer: number
           created_at: string
           explanation: string
           id: number
@@ -21,7 +21,7 @@ export type Database = {
         }
         Insert: {
           category: string
-          correct_answer: number
+          correctAnswer: number
           created_at?: string
           explanation: string
           id: number
@@ -30,7 +30,7 @@ export type Database = {
         }
         Update: {
           category?: string
-          correct_answer?: number
+          correctAnswer?: number
           created_at?: string
           explanation?: string
           id?: number
