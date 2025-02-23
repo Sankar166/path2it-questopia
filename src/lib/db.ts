@@ -5,48 +5,61 @@ import type { Question, UserProgress, UserProfile } from '@/types/questions';
 function generateQuestions(): Question[] {
   const questions: Question[] = [];
   
-  // Quantitative Aptitude Questions (500+ questions)
-  for (let i = 1; i <= 500; i++) {
-    if (i <= 2) {
-      // Base questions
-      questions.push({
-        id: i,
-        category: 'quantitative aptitude',
-        question: i === 1 
-          ? "What is 15% of 400?"
-          : "If a train travels 480 kilometers in 6 hours, what is its average speed in kilometers per hour?",
-        options: i === 1 
-          ? ["50", "60", "45", "40"]
-          : ["60 km/h", "70 km/h", "80 km/h", "90 km/h"],
-        correctAnswer: i === 1 ? 1 : 2,
-        explanation: i === 1 
-          ? "15% of 400 = (15/100) × 400 = 60"
-          : "Average speed = Total distance / Total time = 480 km / 6 h = 80 km/h"
-      });
-    } else {
-      // Generate variations
-      const num1 = Math.floor(Math.random() * 1000) + 100;
-      const percentage = Math.floor(Math.random() * 90) + 10;
-      const result = (percentage / 100) * num1;
-      
-      questions.push({
-        id: i,
-        category: 'quantitative aptitude',
-        question: `What is ${percentage}% of ${num1}?`,
-        options: [
-          Math.floor(result - 10).toString(),
-          result.toString(),
-          Math.floor(result + 10).toString(),
-          Math.floor(result - 5).toString()
-        ],
-        correctAnswer: 1,
-        explanation: `${percentage}% of ${num1} = (${percentage}/100) × ${num1} = ${result}`
-      });
+  // Quantitative Aptitude Questions
+  const quantTemplates = [
+    {
+      question: "What is {n1}% of {n2}?",
+      generateOptions: (n1: number, n2: number) => {
+        const correct = (n1 * n2) / 100;
+        return {
+          options: [
+            correct.toString(),
+            (correct + 10).toString(),
+            (correct - 10).toString(),
+            (correct + 5).toString()
+          ],
+          correctAnswer: 0,
+          explanation: `${n1}% of ${n2} = (${n1}/100) × ${n2} = ${correct}`
+        };
+      }
+    },
+    {
+      question: "If a train travels {n1} kilometers in {n2} hours, what is its average speed in kilometers per hour?",
+      generateOptions: (n1: number, n2: number) => {
+        const correct = n1 / n2;
+        return {
+          options: [
+            correct.toString(),
+            (correct + 5).toString(),
+            (correct - 5).toString(),
+            (correct + 10).toString()
+          ],
+          correctAnswer: 0,
+          explanation: `Average speed = Total distance / Total time = ${n1} km / ${n2} h = ${correct} km/h`
+        };
+      }
     }
+  ];
+
+  // Generate Quantitative Questions
+  for (let i = 1; i <= 500; i++) {
+    const template = quantTemplates[Math.floor(Math.random() * quantTemplates.length)];
+    const n1 = Math.floor(Math.random() * 100) + 1;
+    const n2 = Math.floor(Math.random() * 1000) + 100;
+    const { options, correctAnswer, explanation } = template.generateOptions(n1, n2);
+    
+    questions.push({
+      id: i,
+      category: 'quantitative aptitude',
+      question: template.question.replace('{n1}', n1.toString()).replace('{n2}', n2.toString()),
+      options,
+      correctAnswer,
+      explanation
+    });
   }
 
-  // Technical Questions (500+ questions)
-  const technicalQuestions = [
+  // Technical Questions
+  const technicalTemplates = [
     {
       question: "Which of the following is NOT a JavaScript data type?",
       options: ["Boolean", "Integer", "String", "Symbol"],
@@ -58,18 +71,22 @@ function generateQuestions(): Question[] {
       options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
       correctAnswer: 1,
       explanation: "Binary search has a time complexity of O(log n) as it divides the search interval in half with each iteration."
+    },
+    {
+      question: "What does DOM stand for in web development?",
+      options: ["Document Object Model", "Data Object Model", "Document Oriented Model", "Digital Object Model"],
+      correctAnswer: 0,
+      explanation: "DOM stands for Document Object Model, which represents the HTML document as a tree structure of objects."
     }
   ];
 
+  // Generate Technical Questions
   for (let i = 501; i <= 1000; i++) {
-    const baseQuestion = technicalQuestions[Math.floor(Math.random() * technicalQuestions.length)];
+    const template = technicalTemplates[Math.floor(Math.random() * technicalTemplates.length)];
     questions.push({
       id: i,
       category: 'technical',
-      question: baseQuestion.question,
-      options: [...baseQuestion.options],
-      correctAnswer: baseQuestion.correctAnswer,
-      explanation: baseQuestion.explanation
+      ...template
     });
   }
 
@@ -78,17 +95,31 @@ function generateQuestions(): Question[] {
 
 // Helper function to insert questions
 async function insertQuestionsIfNotExist() {
-  const questions = generateQuestions();
-  
-  // Insert questions in batches to avoid timeout
-  const batchSize = 50;
-  for (let i = 0; i < questions.length; i += batchSize) {
-    const batch = questions.slice(i, i + batchSize);
-    const { error } = await supabase
+  try {
+    const { count } = await supabase
       .from('questions')
-      .upsert(batch, { onConflict: 'id' });
+      .select('*', { count: 'exact', head: true });
 
-    if (error) throw error;
+    if (!count || count < 1000) {
+      const questions = generateQuestions();
+      const batchSize = 50;
+      
+      for (let i = 0; i < questions.length; i += batchSize) {
+        const batch = questions.slice(i, i + batchSize);
+        const { error } = await supabase
+          .from('questions')
+          .upsert(batch, { onConflict: 'id' });
+
+        if (error) {
+          console.error('Error inserting questions batch:', error);
+          throw error;
+        }
+      }
+      console.log('Questions generated and inserted successfully');
+    }
+  } catch (error) {
+    console.error('Error in insertQuestionsIfNotExist:', error);
+    throw error;
   }
 }
 
@@ -181,14 +212,29 @@ export async function getUserProgress(userId: string, category?: string) {
 }
 
 export async function getQuestions(category: string) {
-  // Initialize questions if they don't exist
-  await insertQuestionsIfNotExist();
+  try {
+    // Initialize questions if they don't exist
+    await insertQuestionsIfNotExist();
 
-  const { data, error } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('category', category.toLowerCase());
+    // Fetch questions for the specified category
+    const { data, error } = await supabase
+      .from('questions')
+      .select('*')
+      .eq('category', category.toLowerCase())
+      .order('id');
 
-  if (error) throw error;
-  return data as Question[];
+    if (error) {
+      console.error('Error fetching questions:', error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      console.log('No questions found for category:', category);
+    }
+
+    return data as Question[];
+  } catch (error) {
+    console.error('Error in getQuestions:', error);
+    throw error;
+  }
 }

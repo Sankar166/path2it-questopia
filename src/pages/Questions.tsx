@@ -23,10 +23,19 @@ const Questions = () => {
   const { updateProgress } = useProfile();
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
 
-  const { data: questions = [], isLoading } = useQuery({
+  const { data: questions = [], isLoading, error } = useQuery({
     queryKey: ['questions', category],
     queryFn: () => getQuestions(category || ''),
     enabled: !!category,
+    retry: 3,
+    onError: (error) => {
+      console.error('Error fetching questions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load questions. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const handleAnswerClick = async (questionId: number, selectedAnswerIndex: number) => {
@@ -82,7 +91,33 @@ const Questions = () => {
         <Header />
         <main className="container mx-auto px-4 pt-24 pb-16">
           <div className="text-center">
-            <p className="text-xl">Loading questions...</p>
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/4 mx-auto"></div>
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-32 bg-gray-200 rounded"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <Header />
+        <main className="container mx-auto px-4 pt-24 pb-16">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600">Error Loading Questions</h2>
+            <p className="mt-2 text-gray-600">Please try refreshing the page</p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Retry
+            </Button>
           </div>
         </main>
         <Footer />
