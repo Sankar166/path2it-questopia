@@ -86,7 +86,10 @@ function generateQuestions(): Question[] {
     questions.push({
       id: i,
       category: 'technical',
-      ...template
+      question: template.question,
+      options: template.options,
+      correctAnswer: template.correctAnswer,
+      explanation: template.explanation
     });
   }
 
