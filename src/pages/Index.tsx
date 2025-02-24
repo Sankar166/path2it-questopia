@@ -9,7 +9,17 @@ import { getQuestions } from "@/lib/db";
 const Index = () => {
   const navigate = useNavigate();
   
-  // Pre-fetch questions to ensure database connection works
+  // Pre-fetch questions for all categories
+  const { isLoading: quantitativeLoading } = useQuery({
+    queryKey: ['questions', 'quantitative aptitude'],
+    queryFn: () => getQuestions('quantitative aptitude'),
+  });
+
+  const { isLoading: technicalLoading } = useQuery({
+    queryKey: ['questions', 'technical'],
+    queryFn: () => getQuestions('technical'),
+  });
+
   const { isLoading: reasoningLoading } = useQuery({
     queryKey: ['questions', 'reasoning'],
     queryFn: () => getQuestions('reasoning'),
@@ -23,6 +33,22 @@ const Index = () => {
   const categories = [
     {
       id: 1,
+      title: "Quantitative Aptitude",
+      description: "Practice mathematical and numerical reasoning questions to improve your problem-solving skills",
+      questionsCount: 500,
+      progress: 0,
+      isLoading: quantitativeLoading,
+    },
+    {
+      id: 2,
+      title: "Technical",
+      description: "Test your technical knowledge with questions covering various technical concepts",
+      questionsCount: 500,
+      progress: 0,
+      isLoading: technicalLoading,
+    },
+    {
+      id: 3,
       title: "Reasoning",
       description: "Enhance your logical thinking and problem-solving abilities with reasoning questions",
       questionsCount: 500,
@@ -30,7 +56,7 @@ const Index = () => {
       isLoading: reasoningLoading,
     },
     {
-      id: 2,
+      id: 4,
       title: "General Knowledge",
       description: "Test your knowledge on various topics including science, literature, and history",
       questionsCount: 500,
@@ -53,7 +79,7 @@ const Index = () => {
               Master Your Skills
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Practice with comprehensive questions in reasoning and general knowledge
+              Practice with comprehensive questions across multiple categories
               to improve your understanding and prepare for exams.
             </p>
           </div>
@@ -78,4 +104,3 @@ const Index = () => {
 };
 
 export default Index;
-
