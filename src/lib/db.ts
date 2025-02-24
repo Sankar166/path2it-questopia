@@ -1,5 +1,5 @@
 
-import { supabase } from './supabase';
+import { supabase, supabaseAdmin } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
 function generateQuestions(): Question[] {
@@ -106,7 +106,8 @@ async function insertQuestionsIfNotExist() {
       
       for (let i = 0; i < questions.length; i += batchSize) {
         const batch = questions.slice(i, i + batchSize);
-        const { error } = await supabase
+        // Use supabaseAdmin for inserting questions
+        const { error } = await supabaseAdmin
           .from('questions')
           .upsert(batch, { onConflict: 'id' });
 
