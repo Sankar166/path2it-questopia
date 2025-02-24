@@ -10,32 +10,32 @@ const Index = () => {
   const navigate = useNavigate();
   
   // Pre-fetch questions to ensure database connection works
-  const { isLoading: quantitativeLoading } = useQuery({
-    queryKey: ['questions', 'quantitative aptitude'],
-    queryFn: () => getQuestions('quantitative aptitude'),
+  const { isLoading: reasoningLoading } = useQuery({
+    queryKey: ['questions', 'reasoning'],
+    queryFn: () => getQuestions('reasoning'),
   });
 
-  const { isLoading: technicalLoading } = useQuery({
-    queryKey: ['questions', 'technical'],
-    queryFn: () => getQuestions('technical'),
+  const { isLoading: generalKnowledgeLoading } = useQuery({
+    queryKey: ['questions', 'general knowledge'],
+    queryFn: () => getQuestions('general knowledge'),
   });
 
   const categories = [
     {
       id: 1,
-      title: "Quantitative Aptitude",
-      description: "Practice mathematical and logical reasoning questions to enhance your problem-solving skills",
+      title: "Reasoning",
+      description: "Enhance your logical thinking and problem-solving abilities with reasoning questions",
       questionsCount: 500,
       progress: 0,
-      isLoading: quantitativeLoading,
+      isLoading: reasoningLoading,
     },
     {
       id: 2,
-      title: "Technical",
-      description: "Master programming concepts, database management, and system design principles",
+      title: "General Knowledge",
+      description: "Test your knowledge on various topics including science, literature, and history",
       questionsCount: 500,
       progress: 0,
-      isLoading: technicalLoading,
+      isLoading: generalKnowledgeLoading,
     }
   ];
 
@@ -53,8 +53,8 @@ const Index = () => {
               Master Your Skills
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Practice with comprehensive questions in quantitative aptitude and technical topics
-              to improve your knowledge and prepare for interviews.
+              Practice with comprehensive questions in reasoning and general knowledge
+              to improve your understanding and prepare for exams.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">

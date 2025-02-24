@@ -1,91 +1,72 @@
-
 import { supabase, supabaseAdmin } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
 function generateQuestions(): Question[] {
   const questions: Question[] = [];
   
-  // Quantitative Aptitude Questions
-  const quantTemplates = [
+  // Reasoning Questions
+  const reasoningTemplates = [
     {
-      question: "What is {n1}% of {n2}?",
-      generateOptions: (n1: number, n2: number) => {
-        const correct = (n1 * n2) / 100;
-        return {
-          options: [
-            correct.toString(),
-            (correct + 10).toString(),
-            (correct - 10).toString(),
-            (correct + 5).toString()
-          ],
-          correctAnswer: 0,
-          explanation: `${n1}% of ${n2} = (${n1}/100) × ${n2} = ${correct}`
-        };
-      }
+      question: "If all A are B, and all B are C, what can we conclude?",
+      options: ["All A are C", "Some A are C", "No A are C", "Cannot determine"],
+      correctAnswer: 0,
+      explanation: "Following the transitive property, if all A are B and all B are C, then all A must be C."
     },
     {
-      question: "If a train travels {n1} kilometers in {n2} hours, what is its average speed in kilometers per hour?",
-      generateOptions: (n1: number, n2: number) => {
-        const correct = n1 / n2;
-        return {
-          options: [
-            correct.toString(),
-            (correct + 5).toString(),
-            (correct - 5).toString(),
-            (correct + 10).toString()
-          ],
-          correctAnswer: 0,
-          explanation: `Average speed = Total distance / Total time = ${n1} km / ${n2} h = ${correct} km/h`
-        };
-      }
+      question: "If X is greater than Y, and Y is greater than Z, what is the relationship between X and Z?",
+      options: ["X is greater than Z", "X is less than Z", "X equals Z", "Cannot determine"],
+      correctAnswer: 0,
+      explanation: "Due to the transitive property of inequality, if X > Y and Y > Z, then X must be greater than Z."
+    },
+    {
+      question: "In a line of people, if John is ahead of Mary, and Mary is ahead of Peter, what is John's position relative to Peter?",
+      options: ["Ahead of Peter", "Behind Peter", "Same position as Peter", "Cannot determine"],
+      correctAnswer: 0,
+      explanation: "Using transitive reasoning, if John is ahead of Mary and Mary is ahead of Peter, then John must be ahead of Peter."
     }
   ];
 
-  // Generate Quantitative Questions
+  // General Knowledge Questions
+  const generalKnowledgeTemplates = [
+    {
+      question: "Which gas makes up the majority of Earth's atmosphere?",
+      options: ["Nitrogen", "Oxygen", "Carbon Dioxide", "Argon"],
+      correctAnswer: 0,
+      explanation: "Nitrogen makes up approximately 78% of Earth's atmosphere."
+    },
+    {
+      question: "Who wrote 'Romeo and Juliet'?",
+      options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain"],
+      correctAnswer: 0,
+      explanation: "'Romeo and Juliet' was written by William Shakespeare in the late 16th century."
+    },
+    {
+      question: "What is the largest planet in our solar system?",
+      options: ["Jupiter", "Saturn", "Mars", "Venus"],
+      correctAnswer: 0,
+      explanation: "Jupiter is the largest planet in our solar system."
+    }
+  ];
+
+  // Generate Reasoning Questions
   for (let i = 1; i <= 500; i++) {
-    const template = quantTemplates[Math.floor(Math.random() * quantTemplates.length)];
-    const n1 = Math.floor(Math.random() * 100) + 1;
-    const n2 = Math.floor(Math.random() * 1000) + 100;
-    const { options, correctAnswer, explanation } = template.generateOptions(n1, n2);
-    
+    const template = reasoningTemplates[Math.floor(Math.random() * reasoningTemplates.length)];
     questions.push({
-      id: i,
-      category: 'quantitative aptitude',
-      question: template.question.replace('{n1}', n1.toString()).replace('{n2}', n2.toString()),
-      options,
-      correctAnswer,
-      explanation
+      id: i + 1000,
+      category: 'reasoning',
+      question: template.question,
+      options: template.options,
+      correctAnswer: template.correctAnswer,
+      explanation: template.explanation
     });
   }
 
-  // Technical Questions
-  const technicalTemplates = [
-    {
-      question: "Which of the following is NOT a JavaScript data type?",
-      options: ["Boolean", "Integer", "String", "Symbol"],
-      correctAnswer: 1,
-      explanation: "Integer is not a data type in JavaScript. The numeric data type in JavaScript is 'Number'."
-    },
-    {
-      question: "What is the time complexity of binary search?",
-      options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-      correctAnswer: 1,
-      explanation: "Binary search has a time complexity of O(log n) as it divides the search interval in half with each iteration."
-    },
-    {
-      question: "What does DOM stand for in web development?",
-      options: ["Document Object Model", "Data Object Model", "Document Oriented Model", "Digital Object Model"],
-      correctAnswer: 0,
-      explanation: "DOM stands for Document Object Model, which represents the HTML document as a tree structure of objects."
-    }
-  ];
-
-  // Generate Technical Questions
-  for (let i = 501; i <= 1000; i++) {
-    const template = technicalTemplates[Math.floor(Math.random() * technicalTemplates.length)];
+  // Generate General Knowledge Questions
+  for (let i = 1; i <= 500; i++) {
+    const template = generalKnowledgeTemplates[Math.floor(Math.random() * generalKnowledgeTemplates.length)];
     questions.push({
-      id: i,
-      category: 'technical',
+      id: i + 1500,
+      category: 'general knowledge',
       question: template.question,
       options: template.options,
       correctAnswer: template.correctAnswer,
@@ -102,13 +83,12 @@ async function insertQuestionsIfNotExist() {
       .from('questions')
       .select('*', { count: 'exact', head: true });
 
-    if (!count || count < 1000) {
+    if (!count || count < 2000) {
       const questions = generateQuestions();
       const batchSize = 50;
       
       for (let i = 0; i < questions.length; i += batchSize) {
         const batch = questions.slice(i, i + batchSize);
-        // Use supabaseAdmin for inserting questions
         const { error } = await supabaseAdmin
           .from('questions')
           .upsert(batch, { onConflict: 'id' });
