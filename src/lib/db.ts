@@ -96,7 +96,6 @@ function generateQuestions(): Question[] {
   return questions;
 }
 
-// Helper function to insert questions
 async function insertQuestionsIfNotExist() {
   try {
     const { count } = await supabase
@@ -194,7 +193,7 @@ export async function getUserProfile(userId: string) {
     .from('user_profiles')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data;
@@ -230,10 +229,6 @@ export async function getQuestions(category: string) {
     if (error) {
       console.error('Error fetching questions:', error);
       throw error;
-    }
-
-    if (!data || data.length === 0) {
-      console.log('No questions found for category:', category);
     }
 
     return data as Question[];
