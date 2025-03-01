@@ -33,5 +33,5 @@ export interface UserProfile {
   correct_answers: number;
   created_at: string;
   updated_at: string;
+  is_admin: boolean;
 }
-

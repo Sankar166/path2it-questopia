@@ -15,8 +15,8 @@ export function useProfile() {
   });
 
   const createProfile = useMutation({
-    mutationFn: ({ displayName }: { displayName: string }) => 
-      createUserProfile(user!.id, displayName),
+    mutationFn: ({ displayName, isAdmin = false }: { displayName: string; isAdmin?: boolean }) => 
+      createUserProfile(user!.id, displayName, isAdmin),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
     },

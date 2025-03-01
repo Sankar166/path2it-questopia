@@ -2,7 +2,7 @@
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
-export async function createUserProfile(userId: string, displayName: string) {
+export async function createUserProfile(userId: string, displayName: string, isAdmin: boolean = false) {
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([
@@ -11,6 +11,7 @@ export async function createUserProfile(userId: string, displayName: string) {
         display_name: displayName,
         total_questions_attempted: 0,
         correct_answers: 0,
+        is_admin: isAdmin,
       },
     ])
     .select()
@@ -103,4 +104,26 @@ export async function getQuestions(category: string) {
   }
 
   return data as Question[];
+}
+
+export async function setAdminStatus(userId: string, isAdmin: boolean) {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .update({ is_admin: isAdmin })
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getAllUsers() {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
 }

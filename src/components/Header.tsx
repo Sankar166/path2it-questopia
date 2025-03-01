@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 
 export const Header = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -17,7 +17,12 @@ export const Header = () => {
         <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
           PATH2it
         </Link>
-        <nav>
+        <nav className="flex items-center space-x-4">
+          {user && isAdmin && (
+            <Button variant="ghost" asChild>
+              <Link to="/admin">Admin</Link>
+            </Button>
+          )}
           {user ? (
             <Button variant="outline" onClick={handleSignOut}>
               Sign Out
