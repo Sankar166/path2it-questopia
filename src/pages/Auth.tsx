@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { createUserProfile } from "@/lib/db";
+import { ArrowLeft } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +23,6 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
-  // Admin secret code - in a real app this would be securely stored
   const ADMIN_SECRET_CODE = "PATH2it-admin-2023";
 
   useEffect(() => {
@@ -42,7 +41,6 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // Check if admin code is provided and valid
         const isAdmin = isAdminSignUp && adminCode === ADMIN_SECRET_CODE;
         
         if (isAdminSignUp && adminCode !== ADMIN_SECRET_CODE) {
@@ -57,7 +55,6 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
-          // Create user profile with admin status
           await createUserProfile(data.user.id, displayName, isAdmin);
         }
 
@@ -71,7 +68,6 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
-        // Redirect will happen in useEffect
       }
     } catch (error: any) {
       toast({
@@ -89,6 +85,15 @@ const Auth = () => {
       <Header />
       <main className="container mx-auto px-4 pt-24 pb-16">
         <div className="max-w-md mx-auto space-y-8">
+          <div className="flex justify-between items-center">
+            <Button variant="outline" size="sm" asChild className="mb-4">
+              <Link to="/">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Home
+              </Link>
+            </Button>
+          </div>
+          
           <div className="text-center">
             <h1 className="text-4xl font-bold">{isSignUp ? "Sign Up" : "Sign In"}</h1>
             <p className="mt-2 text-gray-600">

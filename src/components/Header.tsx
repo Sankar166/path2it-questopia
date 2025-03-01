@@ -3,6 +3,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { Home, LogOut, LogIn, Shield } from "lucide-react";
 
 export const Header = () => {
   const { user, isAdmin } = useAuth();
@@ -18,18 +19,33 @@ export const Header = () => {
           PATH2it
         </Link>
         <nav className="flex items-center space-x-4">
+          <Button variant="ghost" asChild>
+            <Link to="/">
+              <Home className="mr-2 h-4 w-4" />
+              Home
+            </Link>
+          </Button>
+          
           {user && isAdmin && (
             <Button variant="ghost" asChild>
-              <Link to="/admin">Admin</Link>
+              <Link to="/admin">
+                <Shield className="mr-2 h-4 w-4" />
+                Admin
+              </Link>
             </Button>
           )}
+          
           {user ? (
             <Button variant="outline" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
               Sign Out
             </Button>
           ) : (
             <Button variant="outline" asChild>
-              <Link to="/auth">Sign In</Link>
+              <Link to="/auth">
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In
+              </Link>
             </Button>
           )}
         </nav>
