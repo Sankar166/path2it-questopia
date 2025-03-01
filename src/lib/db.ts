@@ -1,8 +1,8 @@
-
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
 export async function createUserProfile(userId: string, displayName: string, isAdmin: boolean = false) {
+  console.log("Creating profile with admin status:", isAdmin);
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([
@@ -17,7 +17,10 @@ export async function createUserProfile(userId: string, displayName: string, isA
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error creating user profile:", error);
+    throw error;
+  }
   return data;
 }
 

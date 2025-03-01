@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -41,12 +42,14 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
+        // Check if admin signup is selected and validate admin code
         const isAdmin = isAdminSignUp && adminCode === ADMIN_SECRET_CODE;
         
         if (isAdminSignUp && adminCode !== ADMIN_SECRET_CODE) {
           throw new Error("Invalid admin code");
         }
 
+        // Sign up the user with email and password
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -55,6 +58,8 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
+          // Create user profile with admin status if applicable
+          console.log("Creating user profile with admin status:", isAdmin);
           await createUserProfile(data.user.id, displayName, isAdmin);
         }
 
@@ -63,6 +68,7 @@ const Auth = () => {
           description: "Please check your email to verify your account.",
         });
       } else {
+        // Sign in existing user
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -157,6 +163,9 @@ const Auth = () => {
                   onChange={(e) => setAdminCode(e.target.value)}
                   required={isAdminSignUp}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Admin code: PATH2it-admin-2023
+                </p>
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>

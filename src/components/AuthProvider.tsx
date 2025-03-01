@@ -58,8 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchUserProfile = async (userId: string) => {
     try {
       const profileData = await getUserProfile(userId);
+      console.log("Fetched profile data:", profileData);
       setProfile(profileData);
-      setIsAdmin(!!profileData?.is_admin);
+      // Check if is_admin exists and is true
+      setIsAdmin(profileData?.is_admin === true);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     } finally {
