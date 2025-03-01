@@ -3,6 +3,19 @@ import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
 export async function createUserProfile(userId: string, displayName: string, isAdmin: boolean = false) {
   console.log("Creating profile with admin status:", isAdmin);
+  
+  // First check if profile already exists to prevent duplicate attempts
+  const { data: existingProfile } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+    
+  if (existingProfile) {
+    console.log("Profile already exists:", existingProfile);
+    return existingProfile;
+  }
+  
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([
@@ -75,7 +88,10 @@ export async function getUserProfile(userId: string) {
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error fetching user profile:", error);
+    throw error;
+  }
   return data;
 }
 

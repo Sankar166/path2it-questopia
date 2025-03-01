@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,47 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
+  const [searchParams] = useSearchParams();
 
   const ADMIN_SECRET_CODE = "PATH2it-admin-2023";
+
+  useEffect(() => {
+    // Check for email confirmation
+    const handleEmailConfirmation = async () => {
+      const token_hash = searchParams.get('token_hash');
+      const type = searchParams.get('type');
+      
+      if (token_hash && type === 'email_confirmation') {
+        try {
+          setLoading(true);
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: 'email_confirmation',
+          });
+          
+          if (error) throw error;
+          
+          toast({
+            title: "Email verified successfully",
+            description: "You can now sign in with your credentials.",
+          });
+          
+          // Stay on the auth page but show login form
+          setIsSignUp(false);
+        } catch (error: any) {
+          toast({
+            title: "Error verifying email",
+            description: error.message,
+            variant: "destructive",
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    handleEmailConfirmation();
+  }, [searchParams, toast]);
 
   useEffect(() => {
     if (user) {
@@ -60,14 +99,23 @@ const Auth = () => {
         if (data.user) {
           // Create user profile with admin status if applicable
           console.log("Creating user profile with admin status:", isAdmin);
-          await createUserProfile(data.user.id, displayName, isAdmin);
-          
-          toast({
-            title: "Success!",
-            description: isAdmin 
-              ? "Admin account created. Please check your email to verify your account."
-              : "Please check your email to verify your account.",
-          });
+          try {
+            await createUserProfile(data.user.id, displayName, isAdmin);
+            
+            toast({
+              title: "Success!",
+              description: isAdmin 
+                ? "Admin account created. Please check your email to verify your account."
+                : "Please check your email to verify your account.",
+            });
+          } catch (profileError: any) {
+            console.error("Profile creation error:", profileError);
+            toast({
+              title: "Profile creation error",
+              description: profileError.message,
+              variant: "destructive",
+            });
+          }
         }
       } else {
         // Sign in existing user
@@ -171,7 +219,7 @@ const Auth = () => {
                   required={isAdminSignUp}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Admin code: PATH2it-admin-2023
+                  Admin code is required for admin signup
                 </p>
               </div>
             )}
