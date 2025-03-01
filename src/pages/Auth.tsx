@@ -61,12 +61,14 @@ const Auth = () => {
           // Create user profile with admin status if applicable
           console.log("Creating user profile with admin status:", isAdmin);
           await createUserProfile(data.user.id, displayName, isAdmin);
+          
+          toast({
+            title: "Success!",
+            description: isAdmin 
+              ? "Admin account created. Please check your email to verify your account."
+              : "Please check your email to verify your account.",
+          });
         }
-
-        toast({
-          title: "Success!",
-          description: "Please check your email to verify your account.",
-        });
       } else {
         // Sign in existing user
         const { error } = await supabase.auth.signInWithPassword({
@@ -74,6 +76,11 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
+        
+        toast({
+          title: "Signed in successfully",
+          description: "Welcome back!",
+        });
       }
     } catch (error: any) {
       toast({
