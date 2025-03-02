@@ -22,7 +22,7 @@ export const CategoryCard = ({
 }: CategoryCardProps) => {
   if (isLoading) {
     return (
-      <Card className="p-6 space-y-4 cursor-pointer hover:shadow-md transition-shadow">
+      <Card className="p-6 space-y-4 cursor-wait hover:shadow-md transition-shadow">
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-4 w-1/2" />
@@ -31,12 +31,10 @@ export const CategoryCard = ({
     );
   }
 
-  // Show actual question count if available, otherwise display "Loading questions..."
-  const displayCount = isLoading 
-    ? "Loading questions..." 
-    : questionsCount > 0 
-      ? `${questionsCount} Questions` 
-      : "No questions available";
+  // Display the actual count or an appropriate message
+  const displayCount = questionsCount > 0 
+    ? `${questionsCount} Questions` 
+    : "No questions available";
 
   return (
     <Card
