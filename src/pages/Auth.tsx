@@ -20,6 +20,7 @@ const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [adminCode, setAdminCode] = useState("");
   const [isAdminSignUp, setIsAdminSignUp] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
@@ -32,18 +33,22 @@ const Auth = () => {
     const handleEmailConfirmation = async () => {
       const token_hash = searchParams.get('token_hash');
       const type = searchParams.get('type');
+      const email = searchParams.get('email');
       
-      if (token_hash && type === 'email_confirmation') {
+      if (token_hash && type === 'email_confirmation' && email) {
         try {
           setLoading(true);
+          setVerificationStatus("Verifying your email...");
+          
           const { error } = await supabase.auth.verifyOtp({
             token_hash,
             type: 'email',
-            email: searchParams.get('email') || '',
+            email: email,
           });
           
           if (error) throw error;
           
+          setVerificationStatus("Email verified successfully! You can now sign in.");
           toast({
             title: "Email verified successfully",
             description: "You can now sign in with your credentials.",
@@ -52,6 +57,7 @@ const Auth = () => {
           // Stay on the auth page but show login form
           setIsSignUp(false);
         } catch (error: any) {
+          setVerificationStatus("Failed to verify email. Please try again.");
           toast({
             title: "Error verifying email",
             description: error.message,
@@ -93,6 +99,9 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth`,
+          }
         });
 
         if (error) throw error;
@@ -155,6 +164,18 @@ const Auth = () => {
               </Link>
             </Button>
           </div>
+          
+          {verificationStatus && (
+            <div className={`p-4 rounded-md text-center ${
+              verificationStatus.includes("success") 
+                ? "bg-green-100 text-green-800" 
+                : verificationStatus.includes("Failed") 
+                  ? "bg-red-100 text-red-800"
+                  : "bg-blue-100 text-blue-800"
+            }`}>
+              {verificationStatus}
+            </div>
+          )}
           
           <div className="text-center">
             <h1 className="text-4xl font-bold">{isSignUp ? "Sign Up" : "Sign In"}</h1>

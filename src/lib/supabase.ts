@@ -30,6 +30,39 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    redirectTo: `${getSiteUrl()}/auth`
+    // Using object to configure redirect
+    cookieOptions: {
+      path: '/',
+    },
+  },
+});
+
+// Ensure we're setting up redirect URLs for auth
+supabase.auth.onAuthStateChange((event) => {
+  if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+    // Update the redirect URL dynamically when auth state changes
+    supabase.auth.setSession({
+      access_token: '',
+      refresh_token: '',
+    });
   }
 });
+
+// Configure redirect URL dynamically
+const configureRedirectUrl = async () => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      const redirectUrl = `${getSiteUrl()}/auth`;
+      await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+    }
+  } catch (error) {
+    console.error('Error configuring redirect URL:', error);
+  }
+};
+
+// Call the function to set up redirect URL
+configureRedirectUrl();

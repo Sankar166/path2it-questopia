@@ -1,3 +1,4 @@
+
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
@@ -30,7 +31,7 @@ export async function createUserProfile(userId: string, displayName: string, isA
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error creating user profile:", error);
@@ -128,8 +129,16 @@ export async function getQuestions(category: string) {
       console.error('Error fetching questions:', error);
       throw error;
     }
+    
+    // Ensure all questions have a category field
+    const questionsWithCategory = data.map(question => {
+      if (!question.category) {
+        return { ...question, category: category.toLowerCase() };
+      }
+      return question;
+    });
 
-    return data as Question[];
+    return questionsWithCategory as Question[];
   } catch (error) {
     console.error('Exception fetching questions:', error);
     throw error;
