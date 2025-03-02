@@ -16,25 +16,31 @@ export async function createUserProfile(userId: string, displayName: string, isA
     return existingProfile;
   }
   
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .insert([
-      {
-        user_id: userId,
-        display_name: displayName,
-        total_questions_attempted: 0,
-        correct_answers: 0,
-        is_admin: isAdmin,
-      },
-    ])
-    .select()
-    .single();
+  // If no profile exists, create a new one
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .insert([
+        {
+          user_id: userId,
+          display_name: displayName,
+          total_questions_attempted: 0,
+          correct_answers: 0,
+          is_admin: isAdmin,
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error creating user profile:", error);
+    if (error) {
+      console.error("Error creating user profile:", error);
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error("Exception creating user profile:", error);
     throw error;
   }
-  return data;
 }
 
 export async function updateUserProgress(
@@ -111,18 +117,23 @@ export async function getUserProgress(userId: string, category?: string) {
 }
 
 export async function getQuestions(category: string) {
-  const { data, error } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('category', category.toLowerCase())
-    .order('id');
+  try {
+    const { data, error } = await supabase
+      .from('questions')
+      .select('*')
+      .eq('category', category.toLowerCase())
+      .order('id');
 
-  if (error) {
-    console.error('Error fetching questions:', error);
+    if (error) {
+      console.error('Error fetching questions:', error);
+      throw error;
+    }
+
+    return data as Question[];
+  } catch (error) {
+    console.error('Exception fetching questions:', error);
     throw error;
   }
-
-  return data as Question[];
 }
 
 export async function setAdminStatus(userId: string, isAdmin: boolean) {

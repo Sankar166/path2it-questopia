@@ -9,11 +9,27 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY || '';
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+// Get the current site URL dynamically for auth redirects
+const getSiteUrl = () => {
+  let url = window.location.origin;
+  // Handle development environment
+  if (url.includes('localhost')) {
+    return url;
+  }
+  // Handle Lovable preview environment
+  if (url.includes('lovable.dev')) {
+    return url;
+  }
+  return url;
+};
+
 // Regular client for normal operations
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+    redirectTo: `${getSiteUrl()}/auth`
   }
 });

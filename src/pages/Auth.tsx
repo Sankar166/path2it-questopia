@@ -38,7 +38,8 @@ const Auth = () => {
           setLoading(true);
           const { error } = await supabase.auth.verifyOtp({
             token_hash,
-            type: 'email_confirmation',
+            type: 'email',
+            email: searchParams.get('email') || '',
           });
           
           if (error) throw error;
