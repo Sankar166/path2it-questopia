@@ -31,6 +31,13 @@ export const CategoryCard = ({
     );
   }
 
+  // Show actual question count if available, otherwise display "Loading questions..."
+  const displayCount = isLoading 
+    ? "Loading questions..." 
+    : questionsCount > 0 
+      ? `${questionsCount} Questions` 
+      : "No questions available";
+
   return (
     <Card
       className="p-6 space-y-4 cursor-pointer hover:shadow-md transition-shadow"
@@ -40,7 +47,7 @@ export const CategoryCard = ({
       <p className="text-gray-600">{description}</p>
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-gray-600">
-          <span>{questionsCount} Questions</span>
+          <span>{displayCount}</span>
           <span>{progress}% Complete</span>
         </div>
         <Progress value={progress} />

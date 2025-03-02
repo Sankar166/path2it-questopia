@@ -10,22 +10,22 @@ const Index = () => {
   const navigate = useNavigate();
   
   // Pre-fetch questions for all categories
-  const { isLoading: quantitativeLoading } = useQuery({
+  const { data: quantitativeQuestions, isLoading: quantitativeLoading } = useQuery({
     queryKey: ['questions', 'quantitative aptitude'],
     queryFn: () => getQuestions('quantitative aptitude'),
   });
 
-  const { isLoading: technicalLoading } = useQuery({
+  const { data: technicalQuestions, isLoading: technicalLoading } = useQuery({
     queryKey: ['questions', 'technical'],
     queryFn: () => getQuestions('technical'),
   });
 
-  const { isLoading: reasoningLoading } = useQuery({
+  const { data: reasoningQuestions, isLoading: reasoningLoading } = useQuery({
     queryKey: ['questions', 'reasoning'],
     queryFn: () => getQuestions('reasoning'),
   });
 
-  const { isLoading: generalKnowledgeLoading } = useQuery({
+  const { data: generalKnowledgeQuestions, isLoading: generalKnowledgeLoading } = useQuery({
     queryKey: ['questions', 'general knowledge'],
     queryFn: () => getQuestions('general knowledge'),
   });
@@ -34,8 +34,8 @@ const Index = () => {
     {
       id: 1,
       title: "Quantitative Aptitude",
-      description: "Practice mathematical and numerical reasoning questions to improve your problem-solving skills",
-      questionsCount: 500,
+      description: "Practice mathematical problems including clocks, calendars, boats, cisterns, pipes, ages, trains, time and work, profit and loss",
+      questionsCount: quantitativeQuestions?.length || 0,
       progress: 0,
       isLoading: quantitativeLoading,
     },
@@ -43,7 +43,7 @@ const Index = () => {
       id: 2,
       title: "Technical",
       description: "Test your technical knowledge with questions covering various technical concepts",
-      questionsCount: 500,
+      questionsCount: technicalQuestions?.length || 0,
       progress: 0,
       isLoading: technicalLoading,
     },
@@ -51,7 +51,7 @@ const Index = () => {
       id: 3,
       title: "Reasoning",
       description: "Enhance your logical thinking and problem-solving abilities with reasoning questions",
-      questionsCount: 500,
+      questionsCount: reasoningQuestions?.length || 0,
       progress: 0,
       isLoading: reasoningLoading,
     },
@@ -59,7 +59,7 @@ const Index = () => {
       id: 4,
       title: "General Knowledge",
       description: "Test your knowledge on various topics including science, literature, and history",
-      questionsCount: 500,
+      questionsCount: generalKnowledgeQuestions?.length || 0,
       progress: 0,
       isLoading: generalKnowledgeLoading,
     }

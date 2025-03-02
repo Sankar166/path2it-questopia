@@ -1,4 +1,3 @@
-
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
@@ -138,6 +137,7 @@ export async function getQuestions(category: string) {
       return question;
     });
 
+    console.log(`Fetched ${questionsWithCategory.length} questions for category: ${category}`);
     return questionsWithCategory as Question[];
   } catch (error) {
     console.error('Exception fetching questions:', error);
