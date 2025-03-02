@@ -50,7 +50,7 @@ const Index = () => {
     {
       id: 3,
       title: "Reasoning",
-      description: "Enhance your logical thinking and problem-solving abilities with reasoning questions",
+      description: "Enhance your logical thinking and problem-solving abilities with reasoning questions from topics like puzzles, coding-decoding and logical reasoning",
       questionsCount: reasoningQuestions?.length || 0,
       progress: 0,
       isLoading: reasoningLoading,
@@ -58,7 +58,7 @@ const Index = () => {
     {
       id: 4,
       title: "General Knowledge",
-      description: "Test your knowledge on various topics including science, literature, and history",
+      description: "Test your knowledge on various topics including science, literature, history, current affairs and general awareness",
       questionsCount: generalKnowledgeQuestions?.length || 0,
       progress: 0,
       isLoading: generalKnowledgeLoading,

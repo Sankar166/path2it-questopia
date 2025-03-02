@@ -1,3 +1,4 @@
+
 import { supabase } from './supabase';
 import type { Question, UserProgress, UserProfile } from '@/types/questions';
 
@@ -118,6 +119,8 @@ export async function getUserProgress(userId: string, category?: string) {
 
 export async function getQuestions(category: string) {
   try {
+    console.log(`Fetching questions for category: ${category}`);
+    
     const { data, error } = await supabase
       .from('questions')
       .select('*')

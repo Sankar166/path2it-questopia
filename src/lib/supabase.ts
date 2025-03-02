@@ -30,7 +30,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    redirectTo: `${getSiteUrl()}/auth`,
     cookieOptions: {
       path: '/',
     },
