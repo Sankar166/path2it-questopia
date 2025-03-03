@@ -9,12 +9,17 @@ import { getQuestions } from "@/lib/db";
 const Index = () => {
   const navigate = useNavigate();
   
-  // Pre-fetch questions for all categories
+  // Pre-fetch questions for all categories with error handling
   const { data: quantitativeQuestions = [], isLoading: quantitativeLoading } = useQuery({
     queryKey: ['questions', 'quantitative aptitude'],
     queryFn: () => getQuestions('quantitative aptitude'),
     retry: 2,
     refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching quantitative questions:', error);
+      }
+    }
   });
 
   const { data: technicalQuestions = [], isLoading: technicalLoading } = useQuery({
@@ -22,6 +27,11 @@ const Index = () => {
     queryFn: () => getQuestions('technical'),
     retry: 2,
     refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching technical questions:', error);
+      }
+    }
   });
 
   const { data: reasoningQuestions = [], isLoading: reasoningLoading } = useQuery({
@@ -29,6 +39,11 @@ const Index = () => {
     queryFn: () => getQuestions('reasoning'),
     retry: 2,
     refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching reasoning questions:', error);
+      }
+    }
   });
 
   const { data: generalKnowledgeQuestions = [], isLoading: generalKnowledgeLoading } = useQuery({
@@ -36,6 +51,11 @@ const Index = () => {
     queryFn: () => getQuestions('general knowledge'),
     retry: 2,
     refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching general knowledge questions:', error);
+      }
+    }
   });
 
   const categories = [

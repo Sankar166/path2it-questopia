@@ -139,16 +139,24 @@ export async function getQuestions(category: string) {
       console.log(`No questions found for category: ${normalizedCategory}`);
       // Try fetching from local data if available
       try {
+        // Import the questionsData correctly - it's an array export, not a default export
         const localData = await import('@/data/questionsData.ts');
-        if (localData && localData.default) {
-          const filteredQuestions = localData.default.filter(
-            (q: any) => (q.category || '').toLowerCase() === normalizedCategory
+        
+        // The data is directly exported as an array, not as default
+        if (localData && Array.isArray(localData)) {
+          const filteredQuestions = localData.filter(
+            (q: any) => {
+              // If question has category, check if it matches, otherwise assume it belongs to current category
+              return q.category ? 
+                q.category.toLowerCase() === normalizedCategory : 
+                true; // Include questions without category and assign them below
+            }
           );
           
           // Ensure all questions have proper category field
           const processedQuestions = filteredQuestions.map((q: any) => ({
             ...q,
-            category: normalizedCategory,
+            category: q.category || normalizedCategory, // Add category if missing
           }));
           
           console.log(`Loaded ${processedQuestions.length} questions from local data`);
