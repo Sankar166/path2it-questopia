@@ -13,21 +13,29 @@ const Index = () => {
   const { data: quantitativeQuestions = [], isLoading: quantitativeLoading } = useQuery({
     queryKey: ['questions', 'quantitative aptitude'],
     queryFn: () => getQuestions('quantitative aptitude'),
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const { data: technicalQuestions = [], isLoading: technicalLoading } = useQuery({
     queryKey: ['questions', 'technical'],
     queryFn: () => getQuestions('technical'),
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const { data: reasoningQuestions = [], isLoading: reasoningLoading } = useQuery({
     queryKey: ['questions', 'reasoning'],
     queryFn: () => getQuestions('reasoning'),
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const { data: generalKnowledgeQuestions = [], isLoading: generalKnowledgeLoading } = useQuery({
     queryKey: ['questions', 'general knowledge'],
     queryFn: () => getQuestions('general knowledge'),
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const categories = [

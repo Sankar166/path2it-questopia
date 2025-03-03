@@ -134,6 +134,32 @@ export async function getQuestions(category: string) {
       throw error;
     }
     
+    // Handle empty data response
+    if (!data || data.length === 0) {
+      console.log(`No questions found for category: ${normalizedCategory}`);
+      // Try fetching from local data if available
+      try {
+        const localData = await import('@/data/questionsData.ts');
+        if (localData && localData.default) {
+          const filteredQuestions = localData.default.filter(
+            (q: any) => (q.category || '').toLowerCase() === normalizedCategory
+          );
+          
+          // Ensure all questions have proper category field
+          const processedQuestions = filteredQuestions.map((q: any) => ({
+            ...q,
+            category: normalizedCategory,
+          }));
+          
+          console.log(`Loaded ${processedQuestions.length} questions from local data`);
+          return processedQuestions as Question[];
+        }
+      } catch (localError) {
+        console.error('Error loading local question data:', localError);
+      }
+      return [];
+    }
+    
     // Ensure all questions have a category field
     const questionsWithCategory = data.map(question => {
       return { 
