@@ -10,22 +10,22 @@ const Index = () => {
   const navigate = useNavigate();
   
   // Pre-fetch questions for all categories
-  const { data: quantitativeQuestions, isLoading: quantitativeLoading } = useQuery({
+  const { data: quantitativeQuestions = [], isLoading: quantitativeLoading } = useQuery({
     queryKey: ['questions', 'quantitative aptitude'],
     queryFn: () => getQuestions('quantitative aptitude'),
   });
 
-  const { data: technicalQuestions, isLoading: technicalLoading } = useQuery({
+  const { data: technicalQuestions = [], isLoading: technicalLoading } = useQuery({
     queryKey: ['questions', 'technical'],
     queryFn: () => getQuestions('technical'),
   });
 
-  const { data: reasoningQuestions, isLoading: reasoningLoading } = useQuery({
+  const { data: reasoningQuestions = [], isLoading: reasoningLoading } = useQuery({
     queryKey: ['questions', 'reasoning'],
     queryFn: () => getQuestions('reasoning'),
   });
 
-  const { data: generalKnowledgeQuestions, isLoading: generalKnowledgeLoading } = useQuery({
+  const { data: generalKnowledgeQuestions = [], isLoading: generalKnowledgeLoading } = useQuery({
     queryKey: ['questions', 'general knowledge'],
     queryFn: () => getQuestions('general knowledge'),
   });
@@ -66,7 +66,7 @@ const Index = () => {
   ];
 
   const handleCategoryClick = (categoryTitle: string) => {
-    navigate(`/questions/${categoryTitle.toLowerCase()}`);
+    navigate(`/questions/${categoryTitle.toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   return (

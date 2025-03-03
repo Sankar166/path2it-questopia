@@ -119,12 +119,14 @@ export async function getUserProgress(userId: string, category?: string) {
 
 export async function getQuestions(category: string) {
   try {
-    console.log(`Fetching questions for category: ${category}`);
+    // Convert category to lowercase for consistent matching
+    const normalizedCategory = category.toLowerCase();
+    console.log(`Fetching questions for category: ${normalizedCategory}`);
     
     const { data, error } = await supabase
       .from('questions')
       .select('*')
-      .eq('category', category.toLowerCase())
+      .eq('category', normalizedCategory)
       .order('id');
 
     if (error) {
@@ -134,17 +136,18 @@ export async function getQuestions(category: string) {
     
     // Ensure all questions have a category field
     const questionsWithCategory = data.map(question => {
-      if (!question.category) {
-        return { ...question, category: category.toLowerCase() };
-      }
-      return question;
+      return { 
+        ...question, 
+        category: question.category || normalizedCategory 
+      };
     });
 
-    console.log(`Fetched ${questionsWithCategory.length} questions for category: ${category}`);
+    console.log(`Fetched ${questionsWithCategory.length} questions for category: ${normalizedCategory}`);
     return questionsWithCategory as Question[];
   } catch (error) {
     console.error('Exception fetching questions:', error);
-    throw error;
+    // Return empty array on error to prevent undefined errors
+    return [];
   }
 }
 
