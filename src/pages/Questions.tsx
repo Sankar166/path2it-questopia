@@ -141,8 +141,8 @@ const Questions = () => {
             </Link>
           </div>
           <div className="text-center">
-            <h2 className="text-2xl font-bold">No questions found for this category</h2>
-            <p className="mt-2 text-gray-600">Please select a different category</p>
+            <h2 className="text-2xl font-bold">No questions are available for this category yet</h2>
+            <p className="mt-2 text-gray-600">Please check back later or try a different category</p>
           </div>
         </main>
         <Footer />
