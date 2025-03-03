@@ -1,6 +1,7 @@
 
 import { supabase } from '../supabase';
 import type { Question } from '@/types/questions';
+import { categorizeQuestions, ensureQuestionCategory } from '@/lib/questions-helper';
 
 export async function getQuestions(category: string): Promise<Question[]> {
   try {

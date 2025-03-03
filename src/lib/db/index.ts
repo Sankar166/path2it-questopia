@@ -19,3 +19,9 @@ export {
 export {
   getUserProgress
 } from './progress-operations';
+
+// Helper functions
+export {
+  categorizeQuestions,
+  ensureQuestionCategory
+} from '../questions-helper';
