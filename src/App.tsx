@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import GrammarBot from "./pages/GrammarBot";
 import { useAuth } from "@/components/AuthProvider";
 
 const queryClient = new QueryClient({
@@ -48,6 +49,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/grammar-bot" element={<GrammarBot />} />
       <Route path="/questions/:category" element={
         <ProtectedRoute>
           <Questions />

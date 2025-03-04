@@ -3,98 +3,59 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CategoryCard } from "@/components/CategoryCard";
-import { useQuery } from "@tanstack/react-query";
-import { getQuestions } from "@/lib/db";
 
 const Index = () => {
   const navigate = useNavigate();
   
-  // Pre-fetch questions for all categories with error handling
-  const { data: quantitativeQuestions = [], isLoading: quantitativeLoading } = useQuery({
-    queryKey: ['questions', 'quantitative aptitude'],
-    queryFn: () => getQuestions('quantitative aptitude'),
-    retry: 2,
-    refetchOnWindowFocus: false,
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching quantitative questions:', error);
-      }
-    }
-  });
-
-  const { data: technicalQuestions = [], isLoading: technicalLoading } = useQuery({
-    queryKey: ['questions', 'technical'],
-    queryFn: () => getQuestions('technical'),
-    retry: 2,
-    refetchOnWindowFocus: false,
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching technical questions:', error);
-      }
-    }
-  });
-
-  const { data: reasoningQuestions = [], isLoading: reasoningLoading } = useQuery({
-    queryKey: ['questions', 'reasoning'],
-    queryFn: () => getQuestions('reasoning'),
-    retry: 2,
-    refetchOnWindowFocus: false,
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching reasoning questions:', error);
-      }
-    }
-  });
-
-  const { data: generalKnowledgeQuestions = [], isLoading: generalKnowledgeLoading } = useQuery({
-    queryKey: ['questions', 'general knowledge'],
-    queryFn: () => getQuestions('general knowledge'),
-    retry: 2,
-    refetchOnWindowFocus: false,
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching general knowledge questions:', error);
-      }
-    }
-  });
-
   const categories = [
     {
       id: 1,
       title: "Quantitative Aptitude",
       description: "Practice mathematical problems including clocks, calendars, boats, cisterns, pipes, ages, trains, time and work, profit and loss",
-      questionsCount: quantitativeQuestions?.length || 0,
+      questionsCount: 250,
       progress: 0,
-      isLoading: quantitativeLoading,
+      isLoading: false,
     },
     {
       id: 2,
       title: "Technical",
       description: "Test your technical knowledge with questions covering various technical concepts",
-      questionsCount: technicalQuestions?.length || 0,
+      questionsCount: 250,
       progress: 0,
-      isLoading: technicalLoading,
+      isLoading: false,
     },
     {
       id: 3,
       title: "Reasoning",
       description: "Enhance your logical thinking and problem-solving abilities with reasoning questions from topics like puzzles, coding-decoding and logical reasoning",
-      questionsCount: reasoningQuestions?.length || 0,
+      questionsCount: 250,
       progress: 0,
-      isLoading: reasoningLoading,
+      isLoading: false,
     },
     {
       id: 4,
       title: "General Knowledge",
       description: "Test your knowledge on various topics including science, literature, history, current affairs and general awareness",
-      questionsCount: generalKnowledgeQuestions?.length || 0,
+      questionsCount: 250,
       progress: 0,
-      isLoading: generalKnowledgeLoading,
+      isLoading: false,
+    },
+    {
+      id: 5,
+      title: "Grammar Bot",
+      description: "Correct spelling and grammatical errors in your text. Improve your writing with instant feedback.",
+      questionsCount: 0,
+      progress: 0,
+      isLoading: false,
     }
   ];
 
   const handleCategoryClick = (categoryTitle: string) => {
-    navigate(`/questions/${categoryTitle.toLowerCase().replace(/\s+/g, '-')}`);
+    if (categoryTitle === "Grammar Bot") {
+      navigate('/grammar-bot');
+    } else {
+      navigate(`/questions/${categoryTitle.toLowerCase().replace(/\s+/g, '-')}`);
+    }
   };
 
   return (
